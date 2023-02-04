@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Drag Gallery
  * Description:       A Gallery block with Drag and Drop functionality to lay out images in rows while retaining aspect ratio.
- * Version:           0.1.1
+ * Version:           0.1.2
  * Requires at least: 5.8
  * Requires PHP:      7.0
  * Author:            Developub

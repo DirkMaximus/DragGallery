@@ -34,8 +34,8 @@ You can start development with:
 === Drag Gallery ===
 Contributors:      Developub
 Tags:              block
-Tested up to:      0.1.1
-Stable tag:        0.1.1
+Tested up to:      0.1.2
+Stable tag:        0.1.2
 License:           
 License URI:       
 
@@ -58,3 +58,6 @@ A Gallery block with Drag and Drop functionality to lay out images in rows while
 = 0.1.1 =
 * Image toolbar added with options for adding links and replacing the image source.
 * Removed unnecessary wrapper div.
+
+= 0.1.2 =
+* Added support for jQuery variable as '$' or 'jQuery'
