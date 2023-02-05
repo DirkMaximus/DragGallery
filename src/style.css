@@ -56,7 +56,12 @@
 	margin-bottom: var(--gridSpacing);
 }
 .drag-gallery.loading .image {
-	opacity: 0;
+	/*opacity: 0;*/
+	
+	background-color: #f1f1f1;
+}
+.drag-gallery.loading .image.loaded {
+	background-color: transparent;
 }
 
 .drag-gallery .image img {

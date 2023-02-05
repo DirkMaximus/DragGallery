@@ -1,20 +1,52 @@
 class DragGallery {
 
 	constructor() {
+		
+		/*
+		//console.log('jQuery: ' + jQuery);
+		//console.log('$: ' + $);
+		
+		try{
+			if(jQuery) {
+				this.jQuery = jQuery;
+			}else{
+				console.log('jQuery not found');
+			}
+		}catch(e) {
+			console.log('jQuery not found');
+		}
+		
+		if(!this.jQuery) {
+			try{
+				if($ && $.jquery) {
+					this.jQuery = $;
+				}else{
+					console.log('$ not found');
+				}
+			}catch(e) {
+				console.log('$ not found');
+			}
+		}
+		*/
+		
+		if(jQuery) {
+			this.renderRows = this.renderRows.bind(this);
+			this.waitForImages = this.waitForImages.bind(this);
+			this.imgLoad = this.imgLoad.bind(this);
 
-		this.renderRows = this.renderRows.bind(this);
-		this.waitForImages = this.waitForImages.bind(this);
-		this.imgLoad = this.imgLoad.bind(this);
+			jQuery(window).on('resize orientationchange', this.renderRows);
 
-		jQuery(window).on('resize orientationchange', this.renderRows);
+			jQuery(document).ready(this.waitForImages);
+			jQuery(window).on('load', this.waitForImages);
 
-		jQuery(document).ready(this.waitForImages);
-		jQuery(window).on('load', this.waitForImages);
-
-		this.waitForImages();
+			this.waitForImages();
+		}
 	}
 
 	waitForImages() {
+		
+		this.renderRows();
+		
 		const self = this;
 
 		jQuery('.drag-gallery img').each(function(index) {
@@ -31,12 +63,15 @@ class DragGallery {
 		});
 	}
 	imgLoad(e) {
-
+		
+		this.renderRows();
+		
 		const gallery = jQuery(e.target).parents('.drag-gallery')[0];
 
 		let ready = true;
 		jQuery(gallery).find('img').each(function(index) {
-			if(!this.complete) {
+			if(!this.complete && this.naturalWidth > 0) {
+				jQuery(this).addClass('loaded');
 				ready = false;
 				return false;
 			}
@@ -44,8 +79,9 @@ class DragGallery {
 
 		if(ready) {
 			jQuery(gallery).removeClass('loading');
+			jQuery(gallery).find('img').removeClass('loaded');
 
-			this.renderRows();
+			//this.renderRows();
 		}
 	}
 
@@ -110,6 +146,23 @@ class DragGallery {
 			}
 		});
 	}
+	
+	getNaturalDimensions(img) {
+		let naturalWidth = img.naturalWidth;
+		if(!naturalWidth) {
+			naturalWidth = 6;
+		}
+		
+		let naturalHeight = img.naturalHeight;
+		if(!naturalHeight) {
+			naturalHeight = 9;
+		}
+		
+		return {
+			naturalWidth: naturalWidth,
+			naturalHeight: naturalHeight
+		};
+	}
 	renderRow(row) {
 
 		if(row.length == 1) {
@@ -119,10 +172,12 @@ class DragGallery {
 			const width = jQuery(image).parent().innerWidth() - this.getSpaceX(gallery);
 			const img = jQuery(image).find('img')[0];
 			
+			const naturalDimensions = this.getNaturalDimensions(img);
+			
 			jQuery(image)
 			.css('width', '')
 			.css('flex-basis', '')
-			.css('height', width * (img.naturalHeight / img.naturalWidth)+'px');
+			.css('height', width * (naturalDimensions.naturalHeight / naturalDimensions.naturalWidth)+'px');
 			
 		} else {
 
@@ -133,13 +188,18 @@ class DragGallery {
 			const wrapper_rect = wrapper.getBoundingClientRect();
 			
 			const cWidth = wrapper_rect.width;
-
+			
+			var self = this;
+			
 			// Generate array containing all image aspect ratios
 			var ratios = row.map(function(image, i) {
 				
 				let ratio = 0;
 				const img = jQuery(image).find('img')[0];
-				if(img.naturalWidth && img.naturalHeight) ratio = img.naturalWidth / img.naturalHeight;
+				
+				const naturalDimensions = self.getNaturalDimensions(img);
+				
+				ratio = naturalDimensions.naturalWidth / naturalDimensions.naturalHeight;
 
 				return ratio;
 			});
